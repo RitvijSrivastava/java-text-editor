@@ -24,12 +24,16 @@ public class App extends JFrame
 
     public JLabel statusLabel; // Status Label to show errors and messages
     public JTextArea textArea; // Main Text Area
+    public JScrollPane scrollBar; // Add Scroll Bar to the text Area
+
+    private Rule columnView; // Adjust Scroll Bar for column
+    private Rule rowView; //Adjust Scroll Bar for Row
 
     boolean saved; // Check if file saved or not;
     boolean newFileFlag; // Check if new File is created or not
     String fileName; // Store the name of the file opened/created
     
-    String applicationTitle = "JEDIT";
+    String applicationTitle = "JNOTE";
 
     File fileRef; // Store the file
     JFileChooser fileChooser;
@@ -115,13 +119,11 @@ public class App extends JFrame
     private void showMenu() {
         //Create Menu
         JMenu file = new JMenu("File");
-        JMenu edit = new JMenu("Edit");
-        JMenu help = new JMenu("Help");
+        JMenu edit = new JMenu("Edit");        
 
         //Add Menu to Menu Bar
         topMenuBar.add(file);
-        topMenuBar.add(edit);
-        topMenuBar.add(help);
+        topMenuBar.add(edit);        
 
         //Create MenuItem for FILE
         JMenuItem newFile = new JMenuItem("New");
@@ -154,12 +156,7 @@ public class App extends JFrame
         file.add(saveAs);       
         file.add(exit);
 
-        //Create menuItems for EDIT
-        JMenuItem undo = new JMenuItem("Undo");
-        undo.setMnemonic(KeyEvent.VK_Z);
-        undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
-        undo.setActionCommand("Undo");
-
+        //Create menuItems for EDIT       
         JMenuItem cut = new JMenuItem("Cut");
         cut.setMnemonic(KeyEvent.VK_X);
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
@@ -175,8 +172,7 @@ public class App extends JFrame
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
         paste.setActionCommand("Paste");
 
-        //Add menu item to EDIT
-        edit.add(undo);
+        //Add menu item to EDIT        
         edit.add(copy);
         edit.add(cut);
         edit.add(paste);
@@ -186,17 +182,10 @@ public class App extends JFrame
         newFile.addActionListener(menuItemListener);
         open.addActionListener(menuItemListener);
         save.addActionListener(menuItemListener);        
-        exit.addActionListener(menuItemListener);
-        undo.addActionListener(menuItemListener);
+        exit.addActionListener(menuItemListener);       
         cut.addActionListener(menuItemListener);
         copy.addActionListener(menuItemListener);
         paste.addActionListener(menuItemListener);
-
-        MenuItemKeyListener menuItemKeyListener = new MenuItemKeyListener();
-        newFile.addMenuKeyListener(menuItemKeyListener);
-        open.addMenuKeyListener(menuItemKeyListener);
-        exit.addMenuKeyListener(menuItemKeyListener);
-        save.addMenuKeyListener(menuItemKeyListener);
 
         mainFrame.setVisible(true);
     }
@@ -209,7 +198,17 @@ public class App extends JFrame
         textArea.setTabSize(4);
         textArea.setFont(new Font("Serif",Font.PLAIN,20));
 
-        mainFrame.add(textArea);
+        //Setting the scroll bars
+        scrollBar = new JScrollPane(textArea);
+        columnView = new Rule(Rule.HORIZONTAL, true);
+        rowView = new Rule(Rule.VERTICAL, true);
+
+        //Set the column ans row rule for scroll bar
+        scrollBar.setColumnHeaderView(columnView);
+        scrollBar.setRowHeaderView(rowView);
+
+        mainFrame.add(scrollBar);
+        
         mainFrame.setVisible(true);
     }
     
@@ -405,7 +404,7 @@ public class App extends JFrame
         fileName=new String("Untitled");  
         fileRef = new File(fileName);
         
-        saved=true;  
+        saved = true;  
         newFileFlag = true;
         
         mainFrame.setTitle(fileName+" - "+applicationTitle);  
@@ -423,7 +422,9 @@ public class App extends JFrame
         public void actionPerformed(ActionEvent e) {
             String actionCommand = e.getActionCommand();
             if (actionCommand.equals("Exit")) {
-                if (confirmSave()) {
+                if (confirmSave() && newFileFlag) {
+                    System.exit(0);
+                } else if (confirmSave()) {
                     System.exit(0);
                 }
             } else if (actionCommand.equals("New")) {
@@ -442,30 +443,6 @@ public class App extends JFrame
                 textArea.paste();
             } 
 
-        }
-    }
-
-    /**LISTENS TO KEY PRESSES */
-    class MenuItemKeyListener implements MenuKeyListener {
-        public void menuKeyTyped(MenuKeyEvent e) {            
-            char ch = e.getKeyChar();
-            if (ch == 'E' || ch == 'e') {
-                System.exit(0);
-            }
-        }
-        public void menuKeyPressed(MenuKeyEvent e) {
-            char ch = e.getKeyChar();
-            if (ch == 'E' || ch == 'e') {
-                System.exit(0);
-            }
-        }
-        public void menuKeyReleased(MenuKeyEvent e) {
-            char key = e.getKeyChar();
-            if (key == 'E' || key == 'e') {
-                System.exit(0);
-            }else{
-                System.out.println(e.getKeyChar() + " pressed!");
-            }
         }
     }
 }
