@@ -2,6 +2,7 @@ package com.daemonthread.editor.textEditor;
 
 import java.awt.Font;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -29,15 +30,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class App extends JFrame
 {
-    public JFrame mainFrame; //Outer Frame
+	public JFrame mainFrame; //Outer Frame
     public JMenuBar topMenuBar; //Top Menu Bar
 
     public JLabel statusLabel; // Status Label to show errors and messages
     public JTextArea textArea; // Main Text Area
     public JScrollPane scrollBar; // Add Scroll Bar to the text Area
-
-    private Rule columnView; // Adjust Scroll Bar for column
-    private Rule rowView; //Adjust Scroll Bar for Row
+    public JPanel panel; // parent container for textArea
 
     boolean saved; // Check if file saved or not;
     boolean newFileFlag; // Check if new File is created or not
@@ -102,8 +101,9 @@ public class App extends JFrame
     private void prepareGUI() {
         
         //Creating the main Frame
-        mainFrame = new JFrame("JNOTE");
-        mainFrame.setSize(600, 600);
+        mainFrame = new JFrame(applicationTitle);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setMinimumSize(new Dimension(700, 500));
         
         //Create top menu bar
         topMenuBar = new JMenuBar();
@@ -116,10 +116,12 @@ public class App extends JFrame
         //Call TextArea
         showTextArea();
         
+        //Set Menu Bar 
         mainFrame.setJMenuBar(topMenuBar);
         mainFrame.add(statusLabel);
-        mainFrame.setVisible(true);
+        mainFrame.add(panel);
         
+        mainFrame.setVisible(true);        
     }
 
     /** MENU AREA */
@@ -194,35 +196,25 @@ public class App extends JFrame
         copy.addActionListener(menuItemListener);
         paste.addActionListener(menuItemListener);
 
-        mainFrame.setVisible(true);
     }
     
     /** SETTING TEXT AREA */
     private void showTextArea() {
 
         //Setting the panel for textArea
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        textArea = new JTextArea();
+        panel = new JPanel();
+        panel.setLayout(new BorderLayout());        
+        
+        textArea = new JTextArea(500, 500);
 
         //Setting Tab Size to 4        
         textArea.setTabSize(4);
         textArea.setFont(new Font("Serif",Font.PLAIN,20));
 
         //Setting the scroll bars
-        scrollBar = new JScrollPane(textArea);
-        columnView = new Rule(Rule.HORIZONTAL, true);
-        rowView = new Rule(Rule.VERTICAL, true);
+        scrollBar = new JScrollPane(textArea);        
 
-        //Set the column ans row rule for scroll bar
-        scrollBar.setColumnHeaderView(columnView);
-        scrollBar.setRowHeaderView(rowView);
-
-        panel.add(scrollBar, BorderLayout.CENTER);
-        mainFrame.add(panel);
-        
-        mainFrame.setVisible(true);
+        panel.add(scrollBar, BorderLayout.CENTER);    
     }
     
     /**SAVE FILE */
