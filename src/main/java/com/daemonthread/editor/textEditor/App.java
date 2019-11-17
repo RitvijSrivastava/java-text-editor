@@ -428,6 +428,7 @@ public class App extends JFrame
             String actionCommand = e.getActionCommand();
             if (actionCommand.equals("Exit")) {
                 if (confirmSave()) {
+                    System.gc();
                     System.exit(0);
                 }
             } else if (actionCommand.equals("New")) {
