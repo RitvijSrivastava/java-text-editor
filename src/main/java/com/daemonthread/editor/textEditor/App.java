@@ -116,7 +116,6 @@ public class App extends JFrame
         //Call TextArea
         showTextArea();
         
-        // ! TEST OUT DIFFERENT LAYOUT (BOXSET will probably work right)
         mainFrame.setJMenuBar(topMenuBar);
         mainFrame.add(statusLabel);
         mainFrame.setVisible(true);
