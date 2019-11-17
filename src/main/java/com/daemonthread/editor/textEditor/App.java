@@ -102,7 +102,7 @@ public class App extends JFrame
     private void prepareGUI() {
         
         //Creating the main Frame
-        mainFrame = new JFrame("Text Editor");
+        mainFrame = new JFrame("JNOTE");
         mainFrame.setSize(600, 600);
         
         //Create top menu bar
