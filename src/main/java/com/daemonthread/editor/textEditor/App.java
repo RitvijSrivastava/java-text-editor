@@ -1,21 +1,31 @@
 package com.daemonthread.editor.textEditor;
 
-import javax.swing.*;
-import javax.swing.event.MenuKeyEvent;
-import javax.swing.event.MenuKeyListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.OceanTheme;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 public class App extends JFrame
 {
@@ -61,10 +71,8 @@ public class App extends JFrame
         try {
 
             // Set the Look and Feel of the window
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.metal.MetalLookAndFeel");
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
-            //Set the theme to OCEAN
-            MetalLookAndFeel.setCurrentTheme(new OceanTheme());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -192,7 +200,12 @@ public class App extends JFrame
     
     /** SETTING TEXT AREA */
     private void showTextArea() {
-        textArea = new JTextArea(1500, 1500);
+
+        //Setting the panel for textArea
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        textArea = new JTextArea();
 
         //Setting Tab Size to 4        
         textArea.setTabSize(4);
@@ -207,7 +220,8 @@ public class App extends JFrame
         scrollBar.setColumnHeaderView(columnView);
         scrollBar.setRowHeaderView(rowView);
 
-        mainFrame.add(scrollBar);
+        panel.add(scrollBar, BorderLayout.CENTER);
+        mainFrame.add(panel);
         
         mainFrame.setVisible(true);
     }
@@ -277,7 +291,7 @@ public class App extends JFrame
 
         try  
         {  
-            fin=new FileInputStream(temp);  
+            fin = new FileInputStream(temp);  
             din = new BufferedReader(new InputStreamReader(fin));
             
             String str = " ";
@@ -303,8 +317,8 @@ public class App extends JFrame
             } catch (IOException e) {
             }
         }  
-        updateStatus(temp,true);  
-        textArea.setCaretPosition(0);
+        updateStatus(temp,false);  
+        textArea.setCaretPosition(textArea.getText().length());
         
         return true;  
     }      
@@ -422,9 +436,7 @@ public class App extends JFrame
         public void actionPerformed(ActionEvent e) {
             String actionCommand = e.getActionCommand();
             if (actionCommand.equals("Exit")) {
-                if (confirmSave() && newFileFlag) {
-                    System.exit(0);
-                } else if (confirmSave()) {
+                if (confirmSave()) {
                     System.exit(0);
                 }
             } else if (actionCommand.equals("New")) {
